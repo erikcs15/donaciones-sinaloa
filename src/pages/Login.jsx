@@ -83,9 +83,17 @@ export default function Login() {
 
           {error && <p className="error-message">{error}</p>}
 
-         <button type="submit" disabled={loading} className="submit-btn">
-          {loading ? 'Cargando...' : 'Ingresar'}
+          <button type="submit" disabled={loading} className="submit-btn">
+            {loading ? 'Cargando...' : isSignUp ? 'Crear Cuenta' : 'Ingresar'}
           </button>
+        </form>
+
+        <button 
+          className="toggle-btn"
+          onClick={() => setIsSignUp(!isSignUp)}
+        >
+          {isSignUp ? '¿Ya tienes cuenta? Ingresar' : '¿No tienes cuenta? Registrarse'}
+        </button>
 
       
       </div>
