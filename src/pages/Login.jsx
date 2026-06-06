@@ -95,10 +95,7 @@ export default function Login() {
           {isSignUp ? '¿Ya tienes cuenta? Ingresar' : '¿No tienes cuenta? Registrarse'}
         </button>
 
-        <div className="demo-credentials">
-          <p><strong>Demo - Banco:</strong> banco@demo.com / demo123</p>
-          <p><strong>Demo - Supermercado:</strong> super@demo.com / demo123</p>
-        </div>
+      
       </div>
     </div>
   );
