@@ -1,17 +1,12 @@
 import { useState } from 'react';
 import { auth } from '../firebase';
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword,
-  updateProfile 
-} from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import '../styles/Login.css';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('banco');
-  const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -21,14 +16,7 @@ export default function Login() {
     setError('');
 
     try {
-      if (isSignUp) {
-        const result = await createUserWithEmailAndPassword(auth, email, password);
-        await updateProfile(result.user, {
-          displayName: `${userType}|${email.split('@')[0]}`
-        });
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
-      }
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (err) {
       setError(err.message);
     }
@@ -84,18 +72,11 @@ export default function Login() {
           {error && <p className="error-message">{error}</p>}
 
           <button type="submit" disabled={loading} className="submit-btn">
-            {loading ? 'Cargando...' : isSignUp ? 'Crear Cuenta' : 'Ingresar'}
+            {loading ? 'Cargando...' : 'Ingresar'}
           </button>
         </form>
 
-        <button 
-          className="toggle-btn"
-          onClick={() => setIsSignUp(!isSignUp)}
-        >
-          {isSignUp ? '¿Ya tienes cuenta? Ingresar' : '¿No tienes cuenta? Registrarse'}
-        </button>
-
-      
+       
       </div>
     </div>
   );
