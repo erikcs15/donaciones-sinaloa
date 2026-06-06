@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { collection, addDoc, query, where, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
-import { auth } from '../firebase';
 import '../styles/Dashboard.css';
 
 export default function SupermercadoDashboard({ user }) {
