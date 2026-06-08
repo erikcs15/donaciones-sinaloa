@@ -345,27 +345,29 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 /* Estilos para horarios */
-/* Grid para formularios */
+/* Horarios lado a lado */
 .donation-form .form-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  background: white;
-  border: 1px solid #D1D5DB;
-  border-radius: 6px;
-  padding: 1rem;
-  margin: 1rem 0;
+  grid-template-columns: auto auto;
+  gap: 2rem;
+  align-items: flex-start;
 }
 
 .donation-form .form-grid .form-group {
   margin: 0;
+  background: none;
+  border: none;
+  padding: 0;
 }
 
 .donation-form .form-grid .form-group label {
+  display: block;
   margin-bottom: 0.5rem;
 }
 
 input[type="time"] {
   max-width: 140px;
   padding: 0.5rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 4px;
 }
