@@ -7,7 +7,6 @@ import '../styles/Login.css';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('supermercado');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showSignUp, setShowSignUp] = useState(false);
@@ -74,7 +73,7 @@ export default function Login() {
           ¿No tienes empresa registrada? Registrarse
         </button>
 
-        
+       
       </div>
     </div>
   );
