@@ -11,7 +11,8 @@ export default function SupermercadoDashboard({ user, empresaData }) {
     tipo: 'pan',
     cantidad: '',
     descripcion: '',
-    horario: '',
+    horarioInicio: '',
+    horarioFin: '',
     ubicacion: ''
   });
 
@@ -45,36 +46,40 @@ export default function SupermercadoDashboard({ user, empresaData }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      await addDoc(collection(db, 'donaciones'), {
-        ...formData,
-        supermercado: nombreEmpresa,
-        empresaSucursal: sucursal,
-        empresaType: empresaData?.tipo,
-        email: user.email,
-        telefono: telefonoEmpresa,
-        estado: 'disponible',
-        fechaCreacion: new Date(),
-        cantidad: parseInt(formData.cantidad)
-      });
+  try {
+    await addDoc(collection(db, 'donaciones'), {
+      tipo: formData.tipo,
+      cantidad: parseInt(formData.cantidad),
+      descripcion: formData.descripcion,
+      horario: `${formData.horarioInicio} - ${formData.horarioFin}`,
+      ubicacion: formData.ubicacion,
+      supermercado: nombreEmpresa,
+      empresaSucursal: sucursal,
+      empresaType: empresaData?.tipo,
+      email: user.email,
+      telefono: telefonoEmpresa,
+      estado: 'disponible',
+      fechaCreacion: new Date()
+    });
 
-      setFormData({
-        tipo: 'pan',
-        cantidad: '',
-        descripcion: '',
-        horario: '',
-        ubicacion: ''
-      });
-      setShowForm(false);
-      alert('✅ Donación registrada exitosamente');
-    } catch (error) {
-      alert('❌ Error al registrar: ' + error.message);
-    }
-    setLoading(false);
-  };
+    setFormData({
+      tipo: 'pan',
+      cantidad: '',
+      descripcion: '',
+      horarioInicio: '',
+      horarioFin: '',
+      ubicacion: ''
+    });
+    setShowForm(false);
+    alert('✅ Donación registrada exitosamente');
+  } catch (error) {
+    alert('❌ Error al registrar: ' + error.message);
+  }
+  setLoading(false);
+};
 
   const handleDelete = async (id) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar esta donación?')) {
@@ -145,17 +150,29 @@ export default function SupermercadoDashboard({ user, empresaData }) {
               />
             </div>
 
+            <div className="form-grid">
             <div className="form-group">
-              <label>Horario Disponible</label>
+              <label>Horario (Inicio)</label>
               <input
-                type="text"
-                name="horario"
-                value={formData.horario}
+                type="time"
+                name="horarioInicio"
+                value={formData.horarioInicio}
                 onChange={handleInputChange}
-                placeholder="Ej: 4:00 PM - 6:00 PM"
                 required
               />
             </div>
+
+            <div className="form-group">
+              <label>Horario (Fin)</label>
+              <input
+                type="time"
+                name="horarioFin"
+                value={formData.horarioFin}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+          </div>
 
             <div className="form-group">
               <label>Ubicación/Sucursal</label>
