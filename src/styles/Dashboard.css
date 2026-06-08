@@ -343,3 +343,19 @@ input[type="time"] {
 input[type="time"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }
+
+/* Estilos para horarios */
+.donation-form .form-grid {
+  background: white;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.donation-form .form-grid .form-group {
+  margin-bottom: 0;
+}
+
+input[type="time"] {
+  max-width: 140px;
+}
