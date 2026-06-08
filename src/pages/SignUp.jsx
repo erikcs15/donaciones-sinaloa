@@ -151,6 +151,7 @@ export default function SignUp({ onBackToLogin }) {
               >
                 <option value="supermercado">🏪 Supermercado</option>
                 <option value="agricola">🌾 Agrícola</option>
+                <option value="banco">🏦 Banco de Alimentos</option>
               </select>
             </div>
 
