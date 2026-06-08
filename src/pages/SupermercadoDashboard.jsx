@@ -15,7 +15,8 @@ export default function SupermercadoDashboard({ user }) {
     ubicacion: ''
   });
 
-  const nombredSupermercado = user.email.split('@')[0];
+  const nombreEmpresa = empresaData?.nombreEmpresa || 'Empresa';
+  const sucursal = empresaData?.sucursal || '';
   const telefonoDemo = '+5746123456'; // Para demo
 
   useEffect(() => {
@@ -50,7 +51,9 @@ export default function SupermercadoDashboard({ user }) {
     try {
       await addDoc(collection(db, 'donaciones'), {
         ...formData,
-        supermercado: nombredSupermercado,
+        supermercado: nombreEmpresa,
+        empresaSucursal: sucursal,
+        empresaType: empresaData?.tipo,
         email: user.email,
         telefono: telefonoDemo,
         estado: 'disponible',

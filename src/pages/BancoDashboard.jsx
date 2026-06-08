@@ -30,7 +30,7 @@ export default function BancoDashboard({ user }) {
     ? donaciones 
     : donaciones.filter(d => d.tipo === filtro);
 
-  const handleContacto = (supermercado, telefono) => {
+  const handleContacto = (empresaNombre, telefono) => {
     const mensaje = `Hola, soy del banco de alimentos. Vi que tienen donación disponible. ¿Podemos coordinar recogida?`;
     const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
     window.open(url, '_blank');

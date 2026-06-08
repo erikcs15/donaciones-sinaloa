@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import { auth } from '../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import SignUp from './SignUp';
 import '../styles/Login.css';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('banco');
+  const [userType, setUserType] = useState('supermercado');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showSignUp, setShowSignUp] = useState(false);
 
   const handleAuth = async (e) => {
     e.preventDefault();
@@ -23,27 +25,16 @@ export default function Login() {
     setLoading(false);
   };
 
+  if (showSignUp) {
+    return <SignUp onBackToLogin={() => setShowSignUp(false)} />;
+  }
+
   return (
     <div className="login-container">
       <div className="login-box">
         <div className="login-header">
-          <h1>Donaciones Sinaloa</h1>
-          <p>Conecta supermercados con bancos de alimentos</p>
-        </div>
-
-        <div className="user-type-selector">
-          <button 
-            className={`type-btn ${userType === 'banco' ? 'active' : ''}`}
-            onClick={() => setUserType('banco')}
-          >
-            🏦 Banco de Alimentos
-          </button>
-          <button 
-            className={`type-btn ${userType === 'supermercado' ? 'active' : ''}`}
-            onClick={() => setUserType('supermercado')}
-          >
-            🏪 Supermercado
-          </button>
+          <h1>🤝 Donaciones Sinaloa</h1>
+          <p>Conecta empresas con bancos de alimentos</p>
         </div>
 
         <form onSubmit={handleAuth} className="login-form">
@@ -53,7 +44,7 @@ export default function Login() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="tuemail@ejemplo.com"
+              placeholder="contacto@empresa.com"
               required
             />
           </div>
@@ -76,7 +67,14 @@ export default function Login() {
           </button>
         </form>
 
-       
+        <button 
+          className="toggle-btn"
+          onClick={() => setShowSignUp(true)}
+        >
+          ¿No tienes empresa registrada? Registrarse
+        </button>
+
+        
       </div>
     </div>
   );

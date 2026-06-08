@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
-import { auth } from './firebase';
+import { auth, db } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import Login from './pages/Login';
 import BancoDashboard from './pages/BancoDashboard';
 import SupermercadoDashboard from './pages/SupermercadoDashboard';
+import Header from './components/Header';
 import './App.css';
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [empresaData, setEmpresaData] = useState(null);
   const [userType, setUserType] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -15,16 +18,31 @@ export default function App() {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        // Obtenemos tipo de usuario del displayName (lo guardamos en login)
-        setUserType(currentUser.displayName?.split('|')[0] || 'banco');
+        setUserType(currentUser.displayName?.split('|')[0] || 'supermercado');
+
+        // Obtener datos de la empresa desde Firestore
+        try {
+          const docRef = doc(db, 'empresas', currentUser.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setEmpresaData(docSnap.data());
+          }
+        } catch (error) {
+          console.error('Error obteniendo datos de empresa:', error);
+        }
       } else {
         setUser(null);
+        setEmpresaData(null);
         setUserType(null);
       }
       setLoading(false);
     });
     return unsubscribe;
   }, []);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
 
   if (loading) {
     return (
@@ -40,21 +58,14 @@ export default function App() {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <div className="header-left">
-          <h1 className="app-title">🤝 Donaciones Sinaloa</h1>
-          <p className="user-badge">{userType === 'banco' ? '🏦 Banco de Alimentos' : '🏪 Supermercado'}</p>
-        </div>
-        <button 
-          className="logout-btn"
-          onClick={() => signOut(auth)}
-        >
-          Salir
-        </button>
-      </header>
+      <Header empresaData={empresaData} onLogout={handleLogout} />
 
       <main className="app-content">
-        {userType === 'banco' ? <BancoDashboard user={user} /> : <SupermercadoDashboard user={user} />}
+        {userType === 'agricola' ? (
+          <BancoDashboard user={user} empresaData={empresaData} />
+        ) : (
+          <SupermercadoDashboard user={user} empresaData={empresaData} />
+        )}
       </main>
     </div>
   );
