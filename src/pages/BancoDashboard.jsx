@@ -99,13 +99,18 @@ export default function BancoDashboard({ user }) {
               </div>
 
               <div className="card-footer">
-                <button 
-                  className="contact-btn"
-                  onClick={() => handleContacto(donacion.supermercado, donacion.telefono)}
-                >
-                  📱 Contactar por WhatsApp
-                </button>
+              <div style={{ marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid #D1D5DB' }}>
+                <p style={{ margin: '0.5rem 0', fontSize: '0.9rem' }}>
+                  <strong>📱 Teléfono:</strong> {donacion.telefono}
+                </p>
               </div>
+              <button 
+                className="contact-btn"
+                onClick={() => handleContacto(donacion.supermercado, donacion.telefono)}
+              >
+                📱 Contactar por WhatsApp
+              </button>
+            </div>
             </div>
           ))}
         </div>
