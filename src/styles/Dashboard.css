@@ -345,17 +345,27 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 /* Estilos para horarios */
+/* Grid para formularios */
 .donation-form .form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
   background: white;
   border: 1px solid #D1D5DB;
   border-radius: 6px;
   padding: 1rem;
+  margin: 1rem 0;
 }
 
 .donation-form .form-grid .form-group {
-  margin-bottom: 0;
+  margin: 0;
+}
+
+.donation-form .form-grid .form-group label {
+  margin-bottom: 0.5rem;
 }
 
 input[type="time"] {
   max-width: 140px;
+  padding: 0.5rem;
 }
