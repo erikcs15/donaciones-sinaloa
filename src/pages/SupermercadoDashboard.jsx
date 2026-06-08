@@ -3,7 +3,7 @@ import { db } from '../firebase';
 import { collection, addDoc, query, where, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 import '../styles/Dashboard.css';
 
-export default function SupermercadoDashboard({ user }) {
+export default function SupermercadoDashboard({ user, empresaData }) {
   const [donaciones, setDonaciones] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -15,9 +15,9 @@ export default function SupermercadoDashboard({ user }) {
     ubicacion: ''
   });
 
-  const nombreEmpresa = empresaData?.nombreEmpresa || 'Empresa';
+  const nombreEmpresa = empresaData?.nombreEmpresa || user.email;
   const sucursal = empresaData?.sucursal || '';
-  const telefonoDemo = '+5746123456'; // Para demo
+  const telefonoEmpresa = empresaData?.telefono || '';
 
   useEffect(() => {
     const q = query(
@@ -55,7 +55,7 @@ export default function SupermercadoDashboard({ user }) {
         empresaSucursal: sucursal,
         empresaType: empresaData?.tipo,
         email: user.email,
-        telefono: telefonoDemo,
+        telefono: telefonoEmpresa,
         estado: 'disponible',
         fechaCreacion: new Date(),
         cantidad: parseInt(formData.cantidad)
@@ -91,7 +91,7 @@ export default function SupermercadoDashboard({ user }) {
     <div className="dashboard">
       <section className="section-header">
         <h2>Mis Donaciones</h2>
-        <p>Registra y gestiona las donaciones de {nombredSupermercado}</p>
+        <p>Registra y gestiona las donaciones de {nombreEmpresa} - {sucursal}</p>
       </section>
 
       <button 
