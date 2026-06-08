@@ -332,3 +332,14 @@
       width: 100%;
     }
   }
+
+  /* Estilos para inputs de tiempo */
+input[type="time"] {
+  max-width: 150px;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
