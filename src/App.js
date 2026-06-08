@@ -61,10 +61,10 @@ export default function App() {
       <Header empresaData={empresaData} onLogout={handleLogout} />
 
       <main className="app-content">
-        {userType === 'agricola' ? (
+        {userType === 'banco' ? (
           <BancoDashboard user={user} empresaData={empresaData} />
         ) : (
-          <SupermercadoDashboard user={user} empresaData={empresaData} />
+        <SupermercadoDashboard user={user} empresaData={empresaData} />
         )}
       </main>
     </div>
