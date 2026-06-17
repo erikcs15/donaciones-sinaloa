@@ -7,6 +7,7 @@ import BancoDashboard from './pages/BancoDashboard';
 import SupermercadoDashboard from './pages/SupermercadoDashboard';
 import Header from './components/Header';
 import './App.css';
+import AdminDashboard from './admin/AdminDashboard';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -18,7 +19,14 @@ export default function App() {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        setUserType(currentUser.displayName?.split('|')[0] || 'supermercado');
+        const isAdmin = currentUser.email === 'admin@donacionessinaloa.com';
+
+          if (isAdmin) {
+            setUserType('admin');
+          } else {
+            setUserType(currentUser.displayName?.split('|')[0] || 'supermercado');
+          }
+        
 
         // Obtener datos de la empresa desde Firestore
         try {
@@ -61,10 +69,12 @@ export default function App() {
       <Header empresaData={empresaData} onLogout={handleLogout} />
 
       <main className="app-content">
-        {userType === 'banco' ? (
+        {userType === 'admin' ? (
+          <AdminDashboard user={user} />
+        ) : userType === 'banco' ? (
           <BancoDashboard user={user} empresaData={empresaData} />
         ) : (
-        <SupermercadoDashboard user={user} empresaData={empresaData} />
+          <SupermercadoDashboard user={user} empresaData={empresaData} />
         )}
       </main>
     </div>
