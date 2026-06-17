@@ -66,8 +66,21 @@ export default function App() {
 
   return (
     <div className="app">
-      <Header empresaData={empresaData} onLogout={handleLogout} />
-
+      {userType === 'admin' ? (
+          <header className="app-header">
+            <div className="header-left">
+              <h1 className="app-title">🔐 Panel Administrador</h1>
+            </div>
+            <button 
+              className="logout-btn"
+              onClick={handleLogout}
+            >
+              Salir
+            </button>
+          </header>
+        ) : (
+          <Header empresaData={empresaData} onLogout={handleLogout} />
+        )}
       <main className="app-content">
         {userType === 'admin' ? (
           <AdminDashboard user={user} />
