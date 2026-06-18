@@ -3,30 +3,9 @@ import { db } from '../firebase';
 import { collection, query, where, onSnapshot, updateDoc, doc, addDoc } from 'firebase/firestore';
 import '../styles/BancoBolsa.css';
 
-export default function BancoBolsa({ user, empresaData }) {
-  const [disponibles, setDisponibles] = useState([]);
+export default function BancoBolsa({ user, empresaData, onVolver }) {
   const [bolsa, setBolsa] = useState({});
   const [loading, setLoading] = useState(true);
-  const [cantidades, setCantidades] = useState({});
-
-  // Cargar productos disponibles
-  useEffect(() => {
-    const q = query(
-      collection(db, 'donaciones'),
-      where('estado', '==', 'disponible')
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setDisponibles(data);
-      setLoading(false);
-    });
-
-    return unsubscribe;
-  }, []);
 
   // Cargar bolsa del banco (productos apartados)
   useEffect(() => {
@@ -58,40 +37,11 @@ export default function BancoBolsa({ user, empresaData }) {
       });
       
       setBolsa(agrupado);
+      setLoading(false);
     });
 
     return unsubscribe;
   }, [user.uid]);
-
-  const handleAgregarABolsa = async (productoId, cantidad) => {
-    if (!cantidad || cantidad <= 0) {
-      alert('Ingresa una cantidad válida');
-      return;
-    }
-
-    const producto = disponibles.find(p => p.id === productoId);
-    
-    if (parseInt(cantidad) > producto.cantidad) {
-      alert('No puedes solicitar más de lo disponible');
-      return;
-    }
-
-    try {
-      await updateDoc(doc(db, 'donaciones', productoId), {
-        estado: 'apartado',
-        apartado_por: user.uid,
-        cantidad_solicitada: parseInt(cantidad)
-      });
-
-      setCantidades(prev => ({
-        ...prev,
-        [productoId]: ''
-      }));
-      alert('✅ Agregado a tu bolsa');
-    } catch (error) {
-      alert('❌ Error: ' + error.message);
-    }
-  };
 
   const handleEliminarDeBolsa = async (productoId) => {
     if (window.confirm('¿Eliminar de la bolsa?')) {
@@ -133,7 +83,7 @@ export default function BancoBolsa({ user, empresaData }) {
         };
       });
 
-      const pedidoRef = await addDoc(collection(db, 'pickups'), {
+      await addDoc(collection(db, 'pickups'), {
         id_banco: user.uid,
         nombre_banco: empresaData?.nombreEmpresa || 'Banco de Alimentos',
         items_por_empresa: itemsPorEmpresa,
@@ -144,21 +94,18 @@ export default function BancoBolsa({ user, empresaData }) {
         notas_admin: ''
       });
 
-      alert(`✅ Pedido creado: ${pedidoRef.id}`);
+      alert('✅ Pedido creado exitosamente');
+      onVolver();
     } catch (error) {
       alert('❌ Error: ' + error.message);
     }
   };
 
-  const handleContactarEmpresa = (empresa, telefono) => {
-    const productos = bolsa[Object.keys(bolsa).find(key => 
-      bolsa[key].empresa === empresa
-    )];
-
+  const handleContactarEmpresa = (empresa, telefono, productos) => {
     let mensaje = `Hola, soy del ${empresaData?.nombreEmpresa}. Necesito recoger los siguientes productos:\n\n`;
     
-    productos.productos.forEach(p => {
-      mensaje += `- ${p.tipo}: ${p.cantidad_solicitada} kg\n`;
+    productos.forEach(p => {
+      mensaje += `• ${p.tipo}: ${p.cantidad_solicitada} kg\n`;
     });
     
     mensaje += `\n¿Cuándo puedo pasar por ellos?`;
@@ -167,50 +114,54 @@ export default function BancoBolsa({ user, empresaData }) {
     window.open(url, '_blank');
   };
 
-  if (loading) return <div className="loading">Cargando...</div>;
+  if (loading) return <div className="loading">Cargando bolsa...</div>;
+
+  const totalProductos = Object.values(bolsa).reduce((sum, grupo) => sum + grupo.productos.length, 0);
 
   return (
-    <div className="bolsa-container">
-      <div className="bolsa-header">
+    <div className="bolsa-panel">
+      <div className="bolsa-header-panel">
         <h2>🛍️ Mi Bolsa</h2>
-        <p>Total de empresas: {Object.keys(bolsa).length}</p>
+        <p>Total de empresas: {Object.keys(bolsa).length} | Total de productos: {totalProductos}</p>
       </div>
 
       {Object.keys(bolsa).length === 0 ? (
         <div className="empty-state">
-          <p>Tu bolsa está vacía. Agrega productos disponibles.</p>
+          <p>Tu bolsa está vacía. Agrega productos desde Donaciones Disponibles.</p>
         </div>
       ) : (
         <>
-          <div className="bolsa-items">
+          <div className="bolsa-items-panel">
             {Object.entries(bolsa).map(([key, data]) => (
-              <div key={key} className="empresa-grupo">
-                <div className="empresa-header">
-                  <h3>🏪 {data.empresa} - {data.sucursal}</h3>
-                  <p>📱 {data.telefono}</p>
+              <div key={key} className="empresa-grupo-panel">
+                <div className="empresa-header-panel">
+                  <h3>🏪 {data.empresa}</h3>
+                  <p>{data.sucursal}</p>
+                  <p className="telefono">📱 {data.telefono}</p>
                 </div>
 
-                <div className="productos-grupo">
+                <div className="productos-grupo-panel">
                   {data.productos.map(producto => (
-                    <div key={producto.id} className="producto-bolsa">
-                      <div className="producto-info">
-                        <h4>{producto.tipo} - {producto.cantidad_solicitada} kg</h4>
-                        <p>{producto.descripcion}</p>
-                        <small>⏰ {producto.horario} | 📍 {producto.ubicacion}</small>
+                    <div key={producto.id} className="producto-bolsa-panel">
+                      <div className="producto-info-panel">
+                        <h4>{producto.tipo}</h4>
+                        <p><strong>{producto.cantidad_solicitada} kg</strong></p>
+                        <small>{producto.descripcion}</small>
+                        <small className="meta">⏰ {producto.horario} | 📍 {producto.ubicacion}</small>
                       </div>
                       <button 
-                        className="btn-eliminar"
+                        className="btn-eliminar-panel"
                         onClick={() => handleEliminarDeBolsa(producto.id)}
                       >
-                        🗑️ Quitar
+                        ✕
                       </button>
                     </div>
                   ))}
                 </div>
 
                 <button 
-                  className="btn-contactar-empresa"
-                  onClick={() => handleContactarEmpresa(data.empresa, data.telefono)}
+                  className="btn-contactar-empresa-panel"
+                  onClick={() => handleContactarEmpresa(data.empresa, data.telefono, data.productos)}
                 >
                   📱 Contactar {data.empresa}
                 </button>
@@ -219,52 +170,13 @@ export default function BancoBolsa({ user, empresaData }) {
           </div>
 
           <button 
-            className="btn-crear-pedido"
+            className="btn-crear-pedido-panel"
             onClick={handleCrearPedido}
           >
             ✅ Crear Pedido
           </button>
         </>
       )}
-
-      <div className="disponibles-para-agregar">
-        <h3>📦 Agregar más productos</h3>
-        
-        {disponibles.length === 0 ? (
-          <p className="text-light">No hay productos disponibles</p>
-        ) : (
-          <div className="agregar-grid">
-            {disponibles.map(producto => (
-              <div key={producto.id} className="producto-agregar">
-                <h4>{producto.supermercado}</h4>
-                <p><strong>{producto.tipo}</strong></p>
-                <p>Disponible: {producto.cantidad} kg</p>
-                <p className="text-light">{producto.descripcion}</p>
-
-                <div className="cantidad-selector">
-                  <input
-                    type="number"
-                    min="1"
-                    max={producto.cantidad}
-                    placeholder="Cantidad (kg)"
-                    value={cantidades[producto.id] || ''}
-                    onChange={(e) => setCantidades(prev => ({
-                      ...prev,
-                      [producto.id]: e.target.value
-                    }))}
-                  />
-                  <button 
-                    className="btn-agregar"
-                    onClick={() => handleAgregarABolsa(producto.id, cantidades[producto.id])}
-                  >
-                    ➕ Agregar
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 }

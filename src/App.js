@@ -8,12 +8,15 @@ import SupermercadoDashboard from './pages/SupermercadoDashboard';
 import Header from './components/Header';
 import './App.css';
 import AdminDashboard from './admin/AdminDashboard';
+import BancoPedidos from './components/BancoPedidos';
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [empresaData, setEmpresaData] = useState(null);
   const [userType, setUserType] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [bankViewMode, setBankViewMode] = useState('donaciones'); // 'donaciones', 'bolsa' o 'pedidos'
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -48,6 +51,23 @@ export default function App() {
     return unsubscribe;
   }, []);
 
+  // Contar productos en bolsa del banco
+    useEffect(() => {
+      if (userType !== 'banco') return;
+      
+      const q = query(
+        collection(db, 'donaciones'),
+        where('estado', '==', 'apartado'),
+        where('apartado_por', '==', user.uid)
+      );
+
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        setCartCount(snapshot.docs.length);
+      });
+
+      return unsubscribe;
+    }, [user.uid, userType]);
+
   const handleLogout = async () => {
     await signOut(auth);
   };
@@ -66,12 +86,32 @@ export default function App() {
 
   return (
     <div className="app">
-      <Header empresaData={userType === 'admin' ? { nombreEmpresa: 'ADMIN', tipo: 'admin' } : empresaData} onLogout={handleLogout} />
+      {userType === 'admin' ? (
+        <header className="app-header">
+          <div className="header-left">
+            <h1 className="app-title">🔐 Panel Administrador</h1>
+          </div>
+          <button 
+            className="logout-btn"
+            onClick={() => signOut(auth)}
+          >
+            Salir
+          </button>
+        </header>
+      ) : (
+        <Header 
+          empresaData={empresaData} 
+          onLogout={handleLogout}
+          onBolsaClick={() => setBankViewMode('bolsa')}
+          onPedidosClick={() => setBankViewMode('pedidos')}
+          cartCount={cartCount}
+        />
+      )}
       <main className="app-content">
         {userType === 'admin' ? (
           <AdminDashboard user={user} />
         ) : userType === 'banco' ? (
-          <BancoDashboard user={user} empresaData={empresaData} />
+          <BancoDashboard user={user} empresaData={empresaData} viewMode={bankViewMode} setViewMode={setBankViewMode} />
         ) : (
           <SupermercadoDashboard user={user} empresaData={empresaData} />
         )}

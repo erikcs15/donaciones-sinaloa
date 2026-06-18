@@ -1,21 +1,16 @@
 import { useState } from 'react';
 import '../styles/Header.css';
 
-export default function Header({ empresaData, onLogout }) {
+export default function Header({ empresaData, onLogout, onBolsaClick, onPedidosClick, cartCount = 0 }) {
   const [showDropdown, setShowDropdown] = useState(false);
 
- if (!empresaData) {
-  return <header className="app-header"><p>Cargando...</p></header>;
-}
-
-
+  if (!empresaData) {
+    return <header className="app-header"><p>Cargando...</p></header>;
+  }
 
   const inicial = empresaData.nombreEmpresa.charAt(0).toUpperCase();
-  let tipoEmoji = '🏪';
-  if (empresaData.tipo === 'supermercado') tipoEmoji = '🏪';
-  else if (empresaData.tipo === 'agricola') tipoEmoji = '🌾';
-  else if (empresaData.tipo === 'banco') tipoEmoji = '🏦';
-  else if (empresaData.tipo === 'admin') tipoEmoji = '🔐';
+  const tipoEmoji = empresaData.tipo === 'supermercado' ? '🏪' : empresaData.tipo === 'agricola' ? '🌾' : empresaData.tipo === 'banco' ? '🏦' : '🔐';
+  const isBanco = empresaData.tipo === 'banco';
 
   return (
     <header className="app-header">
@@ -33,6 +28,7 @@ export default function Header({ empresaData, onLogout }) {
             onClick={() => setShowDropdown(!showDropdown)}
             title={empresaData.nombreEmpresa}
           >
+            {isBanco && cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             {inicial}
           </button>
 
@@ -64,6 +60,32 @@ export default function Header({ empresaData, onLogout }) {
                 <span className="label">📧 Email:</span>
                 <span className="value email-text">{empresaData.email}</span>
               </div>
+
+              {isBanco && (
+                <>
+                  <div className="dropdown-divider"></div>
+
+                  <button 
+                    className="dropdown-option"
+                    onClick={() => {
+                      setShowDropdown(false);
+                      onBolsaClick();
+                    }}
+                  >
+                    🛍️ Mi Bolsa {cartCount > 0 && `(${cartCount})`}
+                  </button>
+
+                  <button 
+                    className="dropdown-option"
+                    onClick={() => {
+                      setShowDropdown(false);
+                      onPedidosClick();
+                    }}
+                  >
+                    📦 Mis Pedidos
+                  </button>
+                </>
+              )}
 
               <div className="dropdown-divider"></div>
 
