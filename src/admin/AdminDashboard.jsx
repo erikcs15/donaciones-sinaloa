@@ -17,9 +17,7 @@ export default function AdminDashboard({ user }) {
     <div className="admin-container">
       <div className="admin-header">
         <h1>🔐 Panel Administrador</h1>
-        <button className="logout-btn" onClick={handleLogout}>
-          Salir
-        </button>
+        
       </div>
 
       <div className="admin-nav">

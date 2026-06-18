@@ -8,37 +8,26 @@ export default function Statistics() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let usuariosData = [];
-    let productosData = [];
-    let loadedData = 0;
+  // Obtener usuarios
+  const qUsuarios = query(collection(db, 'empresas'));
+  const unsubscribeUsuarios = onSnapshot(qUsuarios, (snapshot) => {
+    usuariosData = snapshot.docs.map(doc => doc.data());
+    setUsuarios(usuariosData);
+    setLoading(false);
+  });
 
-    // Obtener usuarios
-    const qUsuarios = query(collection(db, 'empresas'));
-    const unsubscribeUsuarios = onSnapshot(qUsuarios, (snapshot) => {
-      usuariosData = snapshot.docs.map(doc => doc.data());
-      loadedData++;
-      if (loadedData === 2) {
-        setUsuarios(usuariosData);
-        setLoading(false);
-      }
-    });
+  // Obtener productos
+  const qProductos = query(collection(db, 'donaciones'));
+  const unsubscribeProductos = onSnapshot(qProductos, (snapshot) => {
+    productosData = snapshot.docs.map(doc => doc.data());
+    setProductos(productosData);
+  });
 
-    // Obtener productos
-    const qProductos = query(collection(db, 'donaciones'));
-    const unsubscribeProductos = onSnapshot(qProductos, (snapshot) => {
-      productosData = snapshot.docs.map(doc => doc.data());
-      loadedData++;
-      if (loadedData === 2) {
-        setProductos(productosData);
-        setLoading(false);
-      }
-    });
-
-    return () => {
-      unsubscribeUsuarios();
-      unsubscribeProductos();
-    };
-  }, []);
+  return () => {
+    unsubscribeUsuarios();
+    unsubscribeProductos();
+  };
+}, []);
 
   if (loading) return <div className="admin-loading">Cargando estadísticas...</div>;
 
