@@ -24,12 +24,12 @@ export default function BancoBolsa({ user, empresaData, onVolver }) {
       // Agrupar por empresa/sucursal
       const agrupado = {};
       data.forEach(producto => {
-        const key = `${producto.supermercado}-${producto.empresaSucursal}`;
+        const key = `${producto.supermercado || 'sin-empresa'}-${producto.empresaSucursal || 'sin-sucursal'}`;
         if (!agrupado[key]) {
           agrupado[key] = {
-            empresa: producto.supermercado,
-            sucursal: producto.empresaSucursal,
-            telefono: producto.telefono,
+            empresa: producto.supermercado || 'Sin empresa',
+            sucursal: producto.empresaSucursal || 'Sin sucursal',
+            telefono: producto.telefono || '',
             productos: []
           };
         }
@@ -69,16 +69,16 @@ export default function BancoBolsa({ user, empresaData, onVolver }) {
       
       Object.entries(bolsa).forEach(([key, data]) => {
         itemsPorEmpresa[key] = {
-          empresa: data.empresa,
-          sucursal: data.sucursal,
-          telefono: data.telefono,
+          empresa: data.empresa || '',
+          sucursal: data.sucursal || '',
+          telefono: data.telefono || '',
           productos: data.productos.map(p => ({
-            id_producto: p.id,
-            tipo: p.tipo,
-            cantidad_solicitada: p.cantidad_solicitada,
-            descripcion: p.descripcion,
-            ubicacion: p.ubicacion,
-            horario: p.horario
+            id_producto: p.id || '',
+            tipo: p.tipo || '',
+            cantidad_solicitada: p.cantidad_solicitada || 0,
+            descripcion: p.descripcion || '',
+            ubicacion: p.ubicacion || '',
+            horario: p.horario || ''
           }))
         };
       });
@@ -105,7 +105,7 @@ export default function BancoBolsa({ user, empresaData, onVolver }) {
     let mensaje = `Hola, soy del ${empresaData?.nombreEmpresa}. Necesito recoger los siguientes productos:\n\n`;
     
     productos.forEach(p => {
-      mensaje += `• ${p.tipo}: ${p.cantidad_solicitada} kg\n`;
+      mensaje += `• ${p.tipo || 'Producto'}: ${p.cantidad_solicitada || 0} kg\n`;
     });
     
     mensaje += `\n¿Cuándo puedo pasar por ellos?`;
