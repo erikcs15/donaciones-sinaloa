@@ -125,4 +125,19 @@ export default function BancoPedidos({ user, empresaData }) {
               </div>
 
               <div className="pedido-footer">
-                <small></small>
+                <small>
+                  {pedido.fecha_recogida && (
+                    <p>Recogido: {new Date(pedido.fecha_recogida.seconds * 1000).toLocaleDateString('es-ES')}</p>
+                  )}
+                  {pedido.notas_admin && (
+                    <p><strong>Notas:</strong> {pedido.notas_admin}</p>
+                  )}
+                </small>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
