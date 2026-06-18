@@ -59,6 +59,7 @@ export default function BancoBolsa({ user, empresaData, onVolver }) {
   };
 
   const handleCrearPedido = async () => {
+    console.log('BOLSA:', JSON.stringify(bolsa, null, 2));
     if (Object.keys(bolsa).length === 0) {
       alert('Tu bolsa está vacía');
       return;
