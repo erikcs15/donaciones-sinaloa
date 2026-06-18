@@ -4,12 +4,18 @@ import '../styles/Header.css';
 export default function Header({ empresaData, onLogout }) {
   const [showDropdown, setShowDropdown] = useState(false);
 
-  if (!empresaData) {
-    return <header className="app-header"><p>Cargando...</p></header>;
-  }
+ if (!empresaData) {
+  return <header className="app-header"><p>Cargando...</p></header>;
+}
+
+const isAdmin = empresaData?.tipo === 'admin';
 
   const inicial = empresaData.nombreEmpresa.charAt(0).toUpperCase();
-  const tipoEmoji = empresaData.tipo === 'supermercado' ? '🏪' : '🌾';
+  let tipoEmoji = '🏪';
+if (empresaData.tipo === 'supermercado') tipoEmoji = '🏪';
+else if (empresaData.tipo === 'agricola') tipoEmoji = '🌾';
+else if (empresaData.tipo === 'banco') tipoEmoji = '🏦';
+else if (empresaData.tipo === 'admin') tipoEmoji = '🔐';
 
   return (
     <header className="app-header">
