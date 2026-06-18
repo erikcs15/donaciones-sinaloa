@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { auth } from '../firebase';
 import UsersManagement from './UsersManagement';
 import ProductsView from './ProductsView';
 import Statistics from './Statistics';
