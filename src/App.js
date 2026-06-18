@@ -8,7 +8,6 @@ import SupermercadoDashboard from './pages/SupermercadoDashboard';
 import Header from './components/Header';
 import './App.css';
 import AdminDashboard from './admin/AdminDashboard';
-import BancoPedidos from './components/BancoPedidos';
 
 export default function App() {
   const [user, setUser] = useState(null);
