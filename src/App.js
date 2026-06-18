@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { auth, db } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, query, collection, where, onSnapshot } from 'firebase/firestore';
 import Login from './pages/Login';
 import BancoDashboard from './pages/BancoDashboard';
 import SupermercadoDashboard from './pages/SupermercadoDashboard';
