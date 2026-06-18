@@ -11,16 +11,16 @@ export default function Statistics() {
   // Obtener usuarios
   const qUsuarios = query(collection(db, 'empresas'));
   const unsubscribeUsuarios = onSnapshot(qUsuarios, (snapshot) => {
-    usuariosData = snapshot.docs.map(doc => doc.data());
-    setUsuarios(usuariosData);
-    setLoading(false);
+    const data = snapshot.docs.map(doc => doc.data());
+    setUsuarios(data);
   });
 
   // Obtener productos
   const qProductos = query(collection(db, 'donaciones'));
   const unsubscribeProductos = onSnapshot(qProductos, (snapshot) => {
-    productosData = snapshot.docs.map(doc => doc.data());
-    setProductos(productosData);
+    const data = snapshot.docs.map(doc => doc.data());
+    setProductos(data);
+    setLoading(false);
   });
 
   return () => {
