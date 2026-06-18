@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { db } from '../firebase';
-import { collection, query, where, onSnapshot, updateDoc, doc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import BancoBolsa from '../components/BancoBolsa';
 import '../styles/Dashboard.css';
 
