@@ -371,3 +371,34 @@ input[type="time"] {
   border: 1px solid #D1D5DB;
   border-radius: 4px;
 }
+
+
+/* Banco Views */
+.banco-views {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.view-tab {
+  padding: 0.75rem 1.5rem;
+  background: white;
+  border: 2px solid #D1D5DB;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.view-tab:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.view-tab.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
