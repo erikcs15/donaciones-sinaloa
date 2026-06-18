@@ -15,10 +15,7 @@ export default function AdminDashboard({ user }) {
 
   return (
     <div className="admin-container">
-      <div className="admin-header">
-        <h1>🔐 Panel Administrador</h1>
-        
-      </div>
+      
 
       <div className="admin-nav">
         <button 
