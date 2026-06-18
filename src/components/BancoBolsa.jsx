@@ -59,48 +59,60 @@ export default function BancoBolsa({ user, empresaData, onVolver }) {
   };
 
   const handleCrearPedido = async () => {
-    console.log('BOLSA:', JSON.stringify(bolsa, null, 2));
-    if (Object.keys(bolsa).length === 0) {
-      alert('Tu bolsa está vacía');
-      return;
-    }
+  if (Object.keys(bolsa).length === 0) {
+    alert('Tu bolsa está vacía');
+    return;
+  }
 
-    try {
-      const itemsPorEmpresa = {};
-      
-      Object.entries(bolsa).forEach(([key, data]) => {
-        itemsPorEmpresa[key] = {
-          empresa: data.empresa || '',
-          sucursal: data.sucursal || '',
-          telefono: data.telefono || '',
-          productos: data.productos.map(p => ({
-            id_producto: p.id || '',
-            tipo: p.tipo || '',
-            cantidad_solicitada: p.cantidad_solicitada || 0,
-            descripcion: p.descripcion || '',
-            ubicacion: p.ubicacion || '',
-            horario: p.horario || ''
-          }))
-        };
-      });
+  try {
+    const itemsPorEmpresa = {};
+    
+    Object.entries(bolsa).forEach(([key, data]) => {
+      itemsPorEmpresa[key] = {
+        empresa: data.empresa || '',
+        sucursal: data.sucursal || '',
+        telefono: data.telefono || '',
+        productos: data.productos.map(p => ({
+          id_producto: p.id || '',
+          tipo: p.tipo || '',
+          cantidad_solicitada: p.cantidad_solicitada || 0,
+          descripcion: p.descripcion || '',
+          ubicacion: p.ubicacion || '',
+          horario: p.horario || ''
+        }))
+      };
+    });
 
-      await addDoc(collection(db, 'pickups'), {
-        id_banco: user.uid,
-        nombre_banco: empresaData?.nombreEmpresa || 'Banco de Alimentos',
-        items_por_empresa: itemsPorEmpresa,
-        estado: 'en_preparacion',
-        fecha_creacion: new Date(),
-        fecha_recogida: null,
-        fecha_entrega: null,
-        notas_admin: ''
-      });
+    await addDoc(collection(db, 'pickups'), {
+      id_banco: user.uid,
+      nombre_banco: empresaData?.nombreEmpresa || 'Banco de Alimentos',
+      items_por_empresa: itemsPorEmpresa,
+      estado: 'en_preparacion',
+      fecha_creacion: new Date(),
+      fecha_recogida: null,
+      fecha_entrega: null,
+      notas_admin: ''
+    });
 
-      alert('✅ Pedido creado exitosamente');
-      onVolver();
-    } catch (error) {
-      alert('❌ Error: ' + error.message);
-    }
-  };
+    // Limpiar bolsa — cambiar estado de los productos
+    const todosLosProductos = Object.values(bolsa).flatMap(data => data.productos);
+    await Promise.all(
+      todosLosProductos.map(p =>
+        updateDoc(doc(db, 'donaciones', p.id), {
+          estado: 'donado',
+          apartado_por: null,
+          cantidad_solicitada: null
+        })
+      )
+    );
+
+    alert('✅ Pedido creado exitosamente');
+    onVolver();
+  } catch (error) {
+    alert('❌ Error: ' + error.message);
+  }
+};
+
 
   const handleContactarEmpresa = (empresa, telefono, productos) => {
     let mensaje = `Hola, soy del ${empresaData?.nombreEmpresa}. Necesito recoger los siguientes productos:\n\n`;
