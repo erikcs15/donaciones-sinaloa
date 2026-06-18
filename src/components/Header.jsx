@@ -8,14 +8,14 @@ export default function Header({ empresaData, onLogout }) {
   return <header className="app-header"><p>Cargando...</p></header>;
 }
 
-const isAdmin = empresaData?.tipo === 'admin';
+
 
   const inicial = empresaData.nombreEmpresa.charAt(0).toUpperCase();
   let tipoEmoji = '🏪';
-if (empresaData.tipo === 'supermercado') tipoEmoji = '🏪';
-else if (empresaData.tipo === 'agricola') tipoEmoji = '🌾';
-else if (empresaData.tipo === 'banco') tipoEmoji = '🏦';
-else if (empresaData.tipo === 'admin') tipoEmoji = '🔐';
+  if (empresaData.tipo === 'supermercado') tipoEmoji = '🏪';
+  else if (empresaData.tipo === 'agricola') tipoEmoji = '🌾';
+  else if (empresaData.tipo === 'banco') tipoEmoji = '🏦';
+  else if (empresaData.tipo === 'admin') tipoEmoji = '🔐';
 
   return (
     <header className="app-header">
