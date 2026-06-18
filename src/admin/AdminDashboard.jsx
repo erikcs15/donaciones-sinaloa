@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { auth } from '../firebase';
-import { signOut } from 'firebase/auth';
 import UsersManagement from './UsersManagement';
 import ProductsView from './ProductsView';
 import Statistics from './Statistics';
@@ -9,9 +8,7 @@ import './admin.css';
 export default function AdminDashboard({ user }) {
   const [activeTab, setActiveTab] = useState('usuarios');
 
-  const handleLogout = async () => {
-    await signOut(auth);
-  };
+ 
 
   return (
     <div className="admin-container">
