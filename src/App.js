@@ -50,22 +50,21 @@ export default function App() {
     return unsubscribe;
   }, []);
 
-  // Contar productos en bolsa del banco
-    useEffect(() => {
-      if (userType !== 'banco') return;
-      
-      const q = query(
-        collection(db, 'donaciones'),
-        where('estado', '==', 'apartado'),
-        where('apartado_por', '==', user.uid)
-      );
+  useEffect(() => {
+  if (userType !== 'banco' || !user) return; // ✅ verifica que user exista
 
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        setCartCount(snapshot.docs.length);
-      });
+  const q = query(
+    collection(db, 'donaciones'),
+    where('estado', '==', 'apartado'),
+    where('apartado_por', '==', user.uid)
+  );
 
-      return unsubscribe;
-    }, [user.uid, userType]);
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    setCartCount(snapshot.docs.length);
+  });
+
+  return unsubscribe;
+}, [user, userType]); // ✅ depende de user completo, no de user.uid
 
   const handleLogout = async () => {
     await signOut(auth);
